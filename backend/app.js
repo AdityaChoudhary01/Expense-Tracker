@@ -20,6 +20,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://main.d1sj7cd70hlter.amplifyapp.com",
   "https://expense-tracker-app-three-beryl.vercel.app",
+  "https://khatabook-qcb9.onrender.com",
   // add more origins as needed
 ];
 
