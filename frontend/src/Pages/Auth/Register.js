@@ -1,4 +1,3 @@
-// SignupPage.js
 import { useCallback, useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import "./auth.css";
@@ -23,16 +22,15 @@ const Register = () => {
   }, [navigate]);
 
   const particlesInit = useCallback(async (engine) => {
-    // console.log(engine);
     await loadFull(engine);
   }, []);
 
   const particlesLoaded = useCallback(async (container) => {
-    // await console.log(container);
   }, []);
 
   const [values, setValues] = useState({
     name : "",
+    username: "",
     email : "",
     password : "",
 
@@ -56,12 +54,13 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-      const {name, email, password} = values;
+      const {name, username, email, password} = values;
 
       setLoading(false);
      
       const {data} = await axios.post(registerAPI, {
         name,
+        username,
         email,
         password
       });
@@ -162,6 +161,10 @@ const Register = () => {
               <Form.Label className="text-white">Name</Form.Label>
               <Form.Control type="text"  name="name" placeholder="Full name" value={values.name} onChange={handleChange} />
             </Form.Group>
+            <Form.Group controlId="formBasicUsername" className="mt-3" >
+              <Form.Label className="text-white">Username</Form.Label>
+              <Form.Control type="text"  name="username" placeholder="Username" value={values.username} onChange={handleChange} />
+            </Form.Group>
             <Form.Group controlId="formBasicEmail" className="mt-3">
               <Form.Label className="text-white">Email address</Form.Label>
               <Form.Control type="email"  name="email" placeholder="Enter email" value={values.email} onChange={handleChange}/>
@@ -195,4 +198,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default Register;
