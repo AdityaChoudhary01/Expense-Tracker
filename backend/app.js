@@ -8,45 +8,39 @@ import morgan from "morgan";
 import transactionRoutes from "./Routers/Transactions.js";
 import userRoutes from "./Routers/userRouter.js";
 import path from "path";
+import { fileURLToPath } from 'url';
+
+// ES Module equivalent of __dirname to work with import syntax
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: "./config/config.env" });
 const app = express();
 
-const port = process.env.PORT;
+// Use the PORT from environment variables or default to 5000
+const port = process.env.PORT || 5000;
 
 connectDB();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://main.d1sj7cd70hlter.amplifyapp.com",
-  "https://expense-tracker-app-three-beryl.vercel.app",
-  "https://khatabook-qcb9.onrender.com",
-  // add more origins as needed
-];
-
 // Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Router
+// --- API Routes ---
 app.use("/api/v1", transactionRoutes);
 app.use("/api/auth", userRoutes);
+app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../frontend/build", "index.html"));
 });
 
+// --- Start Server ---
 app.listen(port, () => {
   console.log(`Server is listening on http://localhost:${port}`);
 });
