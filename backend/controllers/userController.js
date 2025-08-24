@@ -1,10 +1,5 @@
 import User from "../models/UserSchema.js";
 import bcrypt from "bcrypt";
-
-
-import User from "../models/UserSchema.js";
-import bcrypt from "bcrypt";
-
 export const registerControllers = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
