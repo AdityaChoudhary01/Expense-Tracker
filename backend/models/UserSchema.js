@@ -1,9 +1,4 @@
 import mongoose from "mongoose";
-import validator from "validator";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-
-// User Schema Model - (Name, email, password, creation Date) with validation rules
 
 const UserSchema = new mongoose.Schema({
     name: {
