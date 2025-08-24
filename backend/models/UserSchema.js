@@ -4,44 +4,34 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 // User Schema Model - (Name, email, password, creation Date) with validation rules
-const userSchema = new mongoose.Schema({
+
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Name is required"],
+        required: true,
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
     },
     email: {
         type: String,
-        required: [true, "Email is required"],
-        unique : true,
-        validate : validator.isEmail,
+        required: true,
+        unique: true,
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
-        minlength : [6, "Password Must Be Atleast 6 characters"],
+        required: true,
     },
     isAvatarImageSet: {
         type: Boolean,
         default: false,
-    },
-
+      },
     avatarImage: {
         type: String,
-        default: ""
+        default: "",
     },
-    transactions: {
-        type: [],
-    },
+}, { timestamps: true });
 
-    createdAt: {
-        type:Date,
-        default: Date.now,
-    },
-
-    
-
-});
-
-const User = mongoose.model("User", userSchema);
-
-export default  User;
+export default mongoose.model("User", UserSchema);
