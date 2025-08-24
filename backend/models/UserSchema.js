@@ -29,4 +29,5 @@ const UserSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-export default mongoose.model("User", UserSchema);
+// The third argument here sets the collection name
+export default mongoose.model("User", UserSchema, "khatabook-users");
