@@ -14,7 +14,10 @@ export const registerControllers = async (req, res, next) => {
         
         const usernameCheck = await User.findOne({ username });
         if (usernameCheck) {
-            return res.status(400).json({ msg: "Username already used", status: false });
+            return res.status(409).json({
+                success: false,
+                message: "Username already used",
+            });
         }
 
         let user = await User.findOne({ email });
