@@ -1,17 +1,20 @@
 import User from "../models/UserSchema.js";
 import bcrypt from "bcrypt";
+
 export const registerControllers = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, username, email, password } = req.body;
 
-        // Log the request body to see what data you're receiving
-        console.log("Request Body:", req.body);
-
-        if (!name || !email || !password) {
+        if (!name || !username || !email || !password) {
             return res.status(400).json({
                 success: false,
                 message: "Please enter All Fields",
             });
+        }
+        
+        const usernameCheck = await User.findOne({ username });
+        if (usernameCheck) {
+            return res.status(400).json({ msg: "Username already used", status: false });
         }
 
         let user = await User.findOne({ email });
@@ -26,37 +29,34 @@ export const registerControllers = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        console.log("Creating new user...");
-
         let newUser = await User.create({
             name,
+            username,
             email,
             password: hashedPassword,
         });
 
-        console.log("User created successfully:", newUser);
+        const userResponse = newUser.toObject();
+        delete userResponse.password;
 
         return res.status(200).json({
             success: true,
             message: "User Created Successfully",
-            user: newUser,
+            user: userResponse,
         });
     } catch (err) {
-        // Log the error to see the exact cause of the problem
-        console.error("Error in registerControllers:", err);
-
+        console.log("Error in registerControllers:", err);
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
-            error: err.message, // Send the error message back to the client
+            message: "An error occurred during registration.",
+            error: err.message,
         });
     }
 };
+
 export const loginControllers = async (req, res, next) => {
     try{
         const { email, password } = req.body;
-
-        // console.log(email, password);
   
         if (!email || !password){
             return res.status(400).json({
@@ -83,12 +83,13 @@ export const loginControllers = async (req, res, next) => {
             }); 
         }
 
-        delete user.password;
+        const userResponse = user.toObject();
+        delete userResponse.password;
 
         return res.status(200).json({
             success: true,
             message: `Welcome back, ${user.name}`,
-            user,
+            user: userResponse,
         });
 
     }
