@@ -53,30 +53,35 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-      const {name, username, email, password} = values;
+    const { name, username, email, password } = values;
 
-      setLoading(false);
-     
-      const {data} = await axios.post(registerAPI, {
+    try {
+      const { data } = await axios.post(registerAPI, {
         name,
         username,
         email,
         password
       });
 
-      if(data.success === true){
-        delete data.user.password;
+      if (data.success === true) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success(data.message, toastOptions);
-        setLoading(true);
         navigate("/");
-      }
-      else{
+      } else {
         toast.error(data.message, toastOptions);
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message, toastOptions);
+      } else {
+        toast.error("An error occurred during registration.", toastOptions);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -156,23 +161,23 @@ const Register = () => {
         <h1 className="text-center text-white">Welcome to Expense Management System</h1>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="text-white text-center mt-5" >Registration</h2>
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formBasicName" className="mt-3" >
               <Form.Label className="text-white">Name</Form.Label>
-              <Form.Control type="text"  name="name" placeholder="Full name" value={values.name} onChange={handleChange} />
+              <Form.Control type="text"  name="name" placeholder="Full name" value={values.name} onChange={handleChange} required />
             </Form.Group>
             <Form.Group controlId="formBasicUsername" className="mt-3" >
               <Form.Label className="text-white">Username</Form.Label>
-              <Form.Control type="text"  name="username" placeholder="Username" value={values.username} onChange={handleChange} />
+              <Form.Control type="text"  name="username" placeholder="Username" value={values.username} onChange={handleChange} required />
             </Form.Group>
             <Form.Group controlId="formBasicEmail" className="mt-3">
               <Form.Label className="text-white">Email address</Form.Label>
-              <Form.Control type="email"  name="email" placeholder="Enter email" value={values.email} onChange={handleChange}/>
+              <Form.Control type="email"  name="email" placeholder="Enter email" value={values.email} onChange={handleChange} required/>
             </Form.Group>
 
             <Form.Group controlId="formBasicPassword" className="mt-3">
               <Form.Label className="text-white">Password</Form.Label>
-              <Form.Control type="password"  name="password" placeholder="Password" value={values.password} onChange={handleChange} />
+              <Form.Control type="password"  name="password" placeholder="Password" value={values.password} onChange={handleChange} required/>
             </Form.Group>
             <div style={{width: "100%", display: "flex" , alignItems:"center", justifyContent:"center", flexDirection: "column"}} className="mt-4">
               <Link to="/forgotPassword" className="text-white lnk" >Forgot Password?</Link>
@@ -180,7 +185,6 @@ const Register = () => {
               <Button
                   type="submit"
                   className=" text-center mt-3 btnStyle"
-                  onClick={!loading ? handleSubmit : null}
                   disabled={loading}
                 >
                   {loading ? "Registering..." : "Signup"}
